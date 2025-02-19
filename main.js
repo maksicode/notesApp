@@ -52,13 +52,11 @@ const view = {
             controller.addTask(title, description); // Добавление задачи через контроллер
 
             // Очистка полей ввода, если данные были введены
-            if (title !== '' && description !== '') {
+            if (title.trim() !== '' && description.trim() !== '') {
                 inputTitle.value = '';
                 inputDescription.value = '';
+                defaultText.classList.add('hidden'); // Скрытие текста "Нет задач"
             }
-
-            // Обновление интерфейса
-            defaultText.classList.add('hidden'); // Скрытие текста "Нет задач"
             quantity.textContent = `Всего заметок: ${model.tasks.length}`; // Обновление счетчика задач
 
             // Показ/скрытие фильтра избранного
@@ -99,22 +97,13 @@ const view = {
         const list = document.querySelector('.list');
         list.innerHTML = tasks.map(task => `
             <li id="${task.id}" class="item ${task.isFavorite ? 'favorite' : ''}">
-            
-            <div class="task-header" style="background-color: ${task.color}">
-                <p class="task-title">${task.title}</p>
-                <div class="task-buttons">
-                    
-                    <span class="favorite-button" style="cursor: pointer; font-size: 20px;">
-                        ${task.isFavorite ? '❤️' : '🤍'}
-                    </span>
-                    
-                    <span class="delete-button" style="cursor: pointer; font-size: 20px; user-select: none;">🗑️</span>
-                    
-                    
+                <div class="task-header" style="background-color: ${task.color}">
+                    <p class="task-title">${task.title}</p>
+                    <div class="task-buttons">
+                        <span class="favorite-button" style="cursor: pointer; font-size: 20px;">${task.isFavorite ? '❤️' : '🤍'}</span>
+                        <span class="delete-button" style="cursor: pointer; font-size: 20px; user-select: none;">🗑️</span>  
+                    </div>
                 </div>
-                
-            </div>
-            
                 <div class="item-body">
                     <p class="task-description">${task.description}</p>
                 </div>
@@ -173,7 +162,6 @@ const controller = {
                 view.displayMessage('Название заметки не может быть длиннее 50 символов!', true);
             } else {
                 const color = document.querySelector('input[name="color"]:checked').value; // Получаем выбранный цвет
-
                 model.addTask(title, description, color);
                 // После добавления задачи обновляем отображение в зависимости от фильтра
                 view.updateTaskList();
